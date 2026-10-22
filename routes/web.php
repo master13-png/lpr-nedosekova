@@ -1,20 +1,20 @@
-
 <?php
 
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () =>
-    redirect()->route('catalog.index')
-);
+Route::get('/', function () {
+    return redirect()->route('catalog.index');
+});
 
 Route::prefix('catalog')
     ->name('catalog.')
     ->controller(CatalogController::class)
     ->group(function () {
 
-        Route::get('/', 'index')->name('index');
+        Route::get('/', 'index')
+            ->name('index');
 
         Route::get('/manufacturer/{manufacturer?}', 'byManufacturer')
             ->name('manufacturer');
