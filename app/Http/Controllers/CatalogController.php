@@ -1,162 +1,87 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Manufacturer;
+use App\Models\Medicine;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class CatalogController extends Controller
 {
-    // Статические данные для ЛПР №8
-    private function medicines(): array
+    public function index(Request $request): View
     {
-        return [
-            [
-                'id' => 1,
-                'code' => 'MD-0001',
-                'name' => 'Парацетамол',
-                'manufacturer' => 'Борисовский ЗМП',
-                'form' => 'Таблетки',
-                'dosage_mg' => 500,
-                'price' => 450.00,
-                'by_prescription' => false,
-            ],
-            [
-                'id' => 2,
-                'code' => 'MD-0002',
-                'name' => 'Ибупрофен',
-                'manufacturer' => 'Борисовский ЗМП',
-                'form' => 'Таблетки',
-                'dosage_mg' => 200,
-                'price' => 650.00,
-                'by_prescription' => false,
-            ],
-            [
-                'id' => 3,
-                'code' => 'MD-0003',
-                'name' => 'Амоксициллин',
-                'manufacturer' => 'Sandoz',
-                'form' => 'Капсулы',
-                'dosage_mg' => 500,
-                'price' => 1800.00,
-                'by_prescription' => true,
-            ],
-            [
-                'id' => 4,
-                'code' => 'MD-0004',
-                'name' => 'Цетиризин',
-                'manufacturer' => 'Sandoz',
-                'form' => 'Таблетки',
-                'dosage_mg' => 10,
-                'price' => 900.00,
-                'by_prescription' => false,
-            ],
-            [
-                'id' => 5,
-                'code' => 'MD-0005',
-                'name' => 'Омепразол',
-                'manufacturer' => 'KRKA',
-                'form' => 'Капсулы',
-                'dosage_mg' => 20,
-                'price' => 1100.00,
-                'by_prescription' => false,
-            ],
-            [
-                'id' => 6,
-                'code' => 'MD-0006',
-                'name' => 'Лоратадин',
-                'manufacturer' => 'KRKA',
-                'form' => 'Таблетки',
-                'dosage_mg' => 10,
-                'price' => 750.00,
-                'by_prescription' => false,
-            ],
-            [
-                'id' => 7,
-                'code' => 'MD-0007',
-                'name' => 'Метформин',
-                'manufacturer' => 'Berlin-Chemie',
-                'form' => 'Таблетки',
-                'dosage_mg' => 500,
-                'price' => 1350.00,
-                'by_prescription' => true,
-            ],
-        ];
+        return $this->listing($request);
     }
 
-    // GET /catalog
-    public function index(Request $request)
+    public function show(int $id): View
     {
-        $medicines = collect($this->medicines());
-
-        $search = $request->query('q');
-
-        if ($search) {
-            $medicines = $medicines->filter(
-                fn ($medicine) =>
-                    mb_stripos($medicine['name'], $search) !== false
-            );
-        }
-
-        $sort = $request->query('sort', 'name');
-
-        if (in_array($sort, ['name', 'dosage_mg', 'price'])) {
-            $medicines = $medicines->sortBy($sort);
-        }
-
-        return view('catalog.index', [
-            'title' => 'Каталог лекарственных препаратов',
-            'medicines' => $medicines,
-            'search' => $search,
-            'sort' => $sort,
-        ]);
-    }
-
-    // GET /catalog/1
-    public function show(int $id)
-    {
-        $medicine = collect($this->medicines())
-            ->firstWhere('id', $id);
-
-        abort_if(! $medicine, 404);
+        $medicine = Medicine::with('manufacturer')->findOrFail($id);
 
         return view('catalog.show', [
-            'title' => $medicine['name'],
+            'title' => $medicine->name,
             'medicine' => $medicine,
         ]);
     }
 
-    // GET /catalog/code/MD-0001
-    public function byCode(string $code)
+    public function byCode(string $code): View
     {
-        $medicine = collect($this->medicines())
-            ->firstWhere('code', $code);
-
-        abort_if(! $medicine, 404);
+        $medicine = Medicine::with('manufacturer')
+            ->where('code', $code)
+            ->firstOrFail();
 
         return view('catalog.show', [
-            'title' => $medicine['name'],
+            'title' => $medicine->name,
             'medicine' => $medicine,
         ]);
     }
 
-    // GET /catalog/manufacturer/Sandoz
-    public function byManufacturer(?string $manufacturer = null)
+    public function byManufacturer(Request $request, ?string $manufacturer = null): View
     {
-        $medicines = collect($this->medicines());
+        $selectedManufacturer = $manufacturer === null
+            ? null
+            : Manufacturer::where('name', $manufacturer)->firstOrFail();
+
+        return $this->listing($request, $selectedManufacturer);
+    }
+
+    private function listing(Request $request, ?Manufacturer $manufacturer = null): View
+    {
+        $query = Medicine::with('manufacturer');
 
         if ($manufacturer !== null) {
-            $medicines = $medicines->where(
-                'manufacturer',
-                $manufacturer
-            );
+            $query->whereBelongsTo($manufacturer);
+        }
+
+        $search = $request->query('q');
+        $search = is_string($search) ? trim($search) : '';
+
+        if ($search !== '') {
+            $query->where(function ($query) use ($search): void {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        $requestedSort = $request->query('sort');
+        $sort = is_string($requestedSort)
+            && in_array($requestedSort, ['name', 'dosage_mg', 'price'], true)
+                ? $requestedSort
+                : 'latest';
+
+        if ($sort === 'latest') {
+            $query->latest();
+        } else {
+            $query->orderBy($sort);
         }
 
         return view('catalog.index', [
-            'title' => $manufacturer
-                ? "Препараты производителя: {$manufacturer}"
-                : 'Все производители',
-            'medicines' => $medicines,
-            'search' => null,
-            'sort' => 'name',
+            'title' => $manufacturer === null
+                ? 'Каталог лекарственных препаратов'
+                : "Препараты производителя: {$manufacturer->name}",
+            'medicines' => $query->paginate(5)->withQueryString(),
+            'search' => $search,
+            'sort' => $sort,
         ]);
     }
 }

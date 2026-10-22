@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,8 @@ Route::get('/feedback', [PageController::class, 'feedbackForm'])
 
 Route::post('/feedback', [PageController::class, 'feedbackSend'])
     ->name('feedback.send');
+
+Route::resource('medicines', MedicineController::class)->except(['show']);
 
 Route::get('/hello/{name?}', function (string $name = 'гость') {
     return "Привет, {$name}!";

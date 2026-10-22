@@ -3,7 +3,7 @@
 
 @section('content')
 
-<h1 class="mb-4">{{ $medicine['name'] }}</h1>
+<h1 class="mb-4">{{ $medicine->name }}</h1>
 
 <div class="card">
     <div class="card-body">
@@ -11,32 +11,32 @@
         <dl class="row">
 
             <dt class="col-sm-4">Код препарата</dt>
-            <dd class="col-sm-8">{{ $medicine['code'] }}</dd>
+            <dd class="col-sm-8">{{ $medicine->code }}</dd>
 
             <dt class="col-sm-4">Название</dt>
-            <dd class="col-sm-8">{{ $medicine['name'] }}</dd>
+            <dd class="col-sm-8">{{ $medicine->name }}</dd>
 
             <dt class="col-sm-4">Производитель</dt>
             <dd class="col-sm-8">
-                {{ $medicine['manufacturer'] }}
+                {{ $medicine->manufacturer->name }}
             </dd>
 
             <dt class="col-sm-4">Форма выпуска</dt>
-            <dd class="col-sm-8">{{ $medicine['form'] }}</dd>
+            <dd class="col-sm-8">{{ $medicine->form }}</dd>
 
             <dt class="col-sm-4">Дозировка</dt>
             <dd class="col-sm-8">
-                {{ $medicine['dosage_mg'] }} мг
+                {{ $medicine->dosage_mg }} мг
             </dd>
 
             <dt class="col-sm-4">Цена</dt>
             <dd class="col-sm-8">
-                {{ number_format($medicine['price'], 2, ',', ' ') }} ₸
+                {{ number_format((float) $medicine->price, 2, ',', ' ') }} ₸
             </dd>
 
             <dt class="col-sm-4">Отпуск</dt>
             <dd class="col-sm-8">
-                {{ $medicine['by_prescription']
+                {{ $medicine->by_prescription
                     ? 'По рецепту'
                     : 'Без рецепта' }}
             </dd>

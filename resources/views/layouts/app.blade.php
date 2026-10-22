@@ -47,6 +47,11 @@
                    href="{{ route('feedback.form') }}">
                     Обратная связь
                 </a>
+
+                <a class="text-white text-decoration-none"
+                   href="{{ route('medicines.index') }}">
+                    Управление препаратами
+                </a>
             </div>
 
         </div>
@@ -69,7 +74,7 @@
                 Недосекова Александра Ивановна |
                 Ис-24-22б |
                 Вариант 14 |
-                F1-FUTI
+                {{ config('lab.code') }}
             </div>
 
         </div>

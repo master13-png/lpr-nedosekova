@@ -22,6 +22,11 @@
     <div class="col-md-3">
         <select name="sort" class="form-select">
 
+            <option value="latest"
+                @selected($sort === 'latest')>
+                Сначала новые
+            </option>
+
             <option value="name"
                 @selected($sort === 'name')>
                 По названию
@@ -52,8 +57,10 @@
     <thead class="table-dark">
         <tr>
             <th>№</th>
+            <th>Код</th>
             <th>Название</th>
             <th>Производитель</th>
+            <th>Форма выпуска</th>
             <th>Дозировка</th>
             <th>Цена</th>
             <th>Рецепт</th>
@@ -63,30 +70,38 @@
     <tbody>
         @forelse ($medicines as $medicine)
             <tr>
-                <td>{{ $loop->iteration }}</td>
+                <td>{{ $medicines->firstItem() + $loop->index }}</td>
 
                 <td>
-                    <a href="{{ route('catalog.show', ['id' => $medicine['id']]) }}">
-                        {{ $medicine['name'] }}
+                    <a href="{{ route('catalog.code', ['code' => $medicine->code]) }}">
+                        {{ $medicine->code }}
+                    </a>
+                </td>
+
+                <td>
+                    <a href="{{ route('catalog.show', ['id' => $medicine->id]) }}">
+                        {{ $medicine->name }}
                     </a>
                 </td>
 
                 <td>
                     <a href="{{ route('catalog.manufacturer', [
-                        'manufacturer' => $medicine['manufacturer']
+                        'manufacturer' => $medicine->manufacturer->name
                     ]) }}">
-                        {{ $medicine['manufacturer'] }}
+                        {{ $medicine->manufacturer->name }}
                     </a>
                 </td>
 
-                <td>{{ $medicine['dosage_mg'] }} мг</td>
+                <td>{{ $medicine->form }}</td>
+
+                <td>{{ $medicine->dosage_mg }} мг</td>
 
                 <td>
-                    {{ number_format($medicine['price'], 2, ',', ' ') }} ₸
+                    {{ number_format((float) $medicine->price, 2, ',', ' ') }} ₸
                 </td>
 
                 <td>
-                    @if ($medicine['by_prescription'])
+                    @if ($medicine->by_prescription)
                         <span class="badge bg-warning text-dark">
                             По рецепту
                         </span>
@@ -99,7 +114,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="6" class="text-muted">
+                <td colspan="8" class="text-muted">
                     Ничего не найдено.
                 </td>
             </tr>
@@ -107,5 +122,7 @@
     </tbody>
 
 </table>
+
+{{ $medicines->links() }}
 
 @endsection
