@@ -20,7 +20,7 @@
 
 <body class="d-flex flex-column min-vh-100 bg-light">
 
-    <nav class="navbar navbar-dark bg-success">
+    <nav class="navbar navbar-dark bg-dark">
         <div class="container">
 
             <a class="navbar-brand d-inline-flex align-items-center gap-2"
