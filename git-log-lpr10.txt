@@ -1,0 +1,301 @@
+commit fafe8e770d920d5dd562a93d734cdbce07692a3d
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 15:30:22 +0500
+
+    ЛПР10 п.5: настроить коллекцию Bruno
+    
+    Добавить восемь проверочных запросов, ping и окружение Local в существующую коллекцию lpr10.
+    
+    Генерировать свободный код препарата и передавать созданный ID последующим запросам.
+    
+    Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+
+ lpr10/.gitignore                  |   9 +++
+ lpr10/00_ping.yml                 |  33 +++++++++++
+ lpr10/01_get_medicines.yml        |  51 +++++++++++++++++
+ lpr10/02_post_create_medicine.yml | 113 ++++++++++++++++++++++++++++++++++++++
+ lpr10/03_post_empty_body.yml      |  41 ++++++++++++++
+ lpr10/04_get_medicine.yml         |  46 ++++++++++++++++
+ lpr10/05_patch_name.yml           |  40 ++++++++++++++
+ lpr10/06_put_incomplete.yml       |  42 ++++++++++++++
+ lpr10/07_delete_medicine.yml      |  26 +++++++++
+ lpr10/08_get_deleted_medicine.yml |  33 +++++++++++
+ lpr10/environments/Local.yml      |   6 ++
+ lpr10/opencollection.yml          |  11 ++++
+ 12 files changed, 451 insertions(+)
+
+commit 41eb1b1488faf96f1b95d0329ed12d5891d6f9b7
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 15:29:46 +0500
+
+    ЛПР10 п.4: покрыть REST API Feature-тестами
+    
+    Проверить формат B, CRUD, ошибки валидации, 404/405 и malformed JSON.
+    
+    Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+
+ tests/Feature/Api/MedicineApiTest.php | 318 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 318 insertions(+)
+
+commit fa454d97b3df19e9ce2055043b06a67b4cd96f66
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 15:29:35 +0500
+
+    ЛПР10 п.1-4: добавить REST API препаратов
+    
+    Подключить API-маршруты, формат B, ресурс и CRUD с camelCase-входом и форматированием ошибок.
+    
+    Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+
+ app/Http/Controllers/Api/MedicineController.php | 96 ++++++++++++++++++++++++
+ app/Http/Requests/Api/MedicineApiRequest.php    | 99 +++++++++++++++++++++++++
+ app/Http/Resources/MedicineResource.php         | 35 +++++++++
+ app/Support/ApiFormat.php                       | 35 +++++++++
+ bootstrap/app.php                               | 40 +++++++++-
+ config/lab.php                                  | 12 ++-
+ routes/api.php                                  | 14 ++++
+ 7 files changed, 326 insertions(+), 5 deletions(-)
+
+commit d449b85943f43977de8539206a9f1fc2a1b1329a
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 14:08:05 +0500
+
+    short change
+
+ .osp/project.ini                      | 24 ++++++++++
+ LPR9-OBSERVATIONS.md                  | 86 -----------------------------------
+ resources/views/layouts/app.blade.php |  2 +-
+ 3 files changed, 25 insertions(+), 87 deletions(-)
+
+commit 94ec3018b3c0a247341d1e95de486599b67ad25e
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 03:23:34 +0500
+
+    ЛПР9 п.9-10: зафиксировать результаты наблюдений
+    
+    Документировать проверки схемы MySQL, внешнего ключа, ограничений, N+1 и валидации.
+    
+    Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+
+ LPR9-OBSERVATIONS.md | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+
+commit b92fa9cad7690fe3db85807a20731508f6f09517
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 03:23:26 +0500
+
+    ЛПР9 п.4-8: реализовать CRUD препаратов
+    
+    Добавить поиск, сортировку, eager loading, пагинацию и русскую валидацию; подключить Eloquent к каталогу, сохранив маршруты ЛПР8.
+    
+    Покрыть CRUD и прежние страницы Feature-тестами.
+    
+    Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+
+ app/Http/Controllers/CatalogController.php  | 179 +++++++-----------------
+ app/Http/Controllers/MedicineController.php |  92 ++++++++++++
+ app/Http/Requests/MedicineRequest.php       |  80 +++++++++++
+ app/Providers/AppServiceProvider.php        |   3 +-
+ resources/views/catalog/index.blade.php     |  35 +++--
+ resources/views/catalog/show.blade.php      |  16 +--
+ resources/views/layouts/app.blade.php       |   7 +-
+ resources/views/medicines/form.blade.php    | 142 +++++++++++++++++++
+ resources/views/medicines/index.blade.php   | 106 ++++++++++++++
+ routes/web.php                              |   3 +
+ tests/Feature/CatalogControllerTest.php     |  58 ++++++++
+ tests/Feature/MedicineCrudTest.php          | 210 ++++++++++++++++++++++++++++
+ 12 files changed, 785 insertions(+), 146 deletions(-)
+
+commit 011c53ccdea1df3b33b1e22ac1fdb8c5129a8f3c
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 03:23:15 +0500
+
+    ЛПР9 п.1-3: добавить модели и заполнение БД
+    
+    Создать таблицы производителей и препаратов с внешним ключом RESTRICT, модели Eloquent, фабрики и начальные данные.
+    
+    Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+
+ app/Models/Manufacturer.php                        | 24 +++++++++
+ app/Models/Medicine.php                            | 38 +++++++++++++
+ database/factories/ManufacturerFactory.php         | 25 +++++++++
+ database/factories/MedicineFactory.php             | 40 ++++++++++++++
+ ...026_10_22_220823_create_manufacturers_table.php | 29 ++++++++++
+ .../2026_10_22_220824_create_medicines_table.php   | 36 +++++++++++++
+ ...26_10_22_221336_change_medicine_name_length.php | 28 ++++++++++
+ database/seeders/DatabaseSeeder.php                | 62 ++++++++++++++++++----
+ 8 files changed, 273 insertions(+), 9 deletions(-)
+
+commit 2cdf95c5a114ed1cab9d1a44b78353a804b0ac90
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 03:22:58 +0500
+
+    ЛПР9 п.0: добавить Laravel Boost
+    
+    Подключить dev-зависимость, MCP-конфигурацию и сгенерированные инструкции проекта.
+    
+    Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+
+ .claude/skills/deploying-to-cloud/SKILL.md         | 268 +++++++++++++++
+ .../deploying-to-cloud/reference/checklists.md     |  55 ++++
+ .claude/skills/infer-conventions/SKILL.md          | 105 ++++++
+ .../infer-conventions/references/checklist.md      | 137 ++++++++
+ .claude/skills/laravel-best-practices/SKILL.md     |  59 ++++
+ .../rules/advanced-queries.md                      | 106 ++++++
+ .../laravel-best-practices/rules/architecture.md   | 219 +++++++++++++
+ .../laravel-best-practices/rules/blade-views.md    |  36 +++
+ .../skills/laravel-best-practices/rules/caching.md | 100 ++++++
+ .../laravel-best-practices/rules/collections.md    |  72 +++++
+ .../skills/laravel-best-practices/rules/config.md  |  85 +++++
+ .../laravel-best-practices/rules/db-performance.md | 189 +++++++++++
+ .../laravel-best-practices/rules/eloquent.md       | 158 +++++++++
+ .../laravel-best-practices/rules/error-handling.md |  77 +++++
+ .../rules/events-notifications.md                  |  52 +++
+ .../laravel-best-practices/rules/http-client.md    | 157 +++++++++
+ .../skills/laravel-best-practices/rules/mail.md    |  54 ++++
+ .../laravel-best-practices/rules/migrations.md     |  67 ++++
+ .../laravel-best-practices/rules/queue-jobs.md     | 117 +++++++
+ .../skills/laravel-best-practices/rules/routing.md | 106 ++++++
+ .../laravel-best-practices/rules/scheduling.md     |  61 ++++
+ .../laravel-best-practices/rules/security.md       | 156 +++++++++
+ .../skills/laravel-best-practices/rules/style.md   | 110 +++++++
+ .../laravel-best-practices/rules/validation.md     |  89 +++++
+ .claude/skills/tailwindcss-development/SKILL.md    |  96 ++++++
+ .claude/skills/testing-best-practices/SKILL.md     |  57 ++++
+ .../testing-best-practices/rules/assertions.md     |  60 ++++
+ .../testing-best-practices/rules/endpoint-tests.md |  47 +++
+ .../rules/finding-features.md                      |  33 ++
+ .../testing-best-practices/rules/isolation.md      |  52 +++
+ .../skills/testing-best-practices/rules/naming.md  |  37 +++
+ .../testing-best-practices/rules/performance.md    |  46 +++
+ .../skills/testing-best-practices/rules/review.md  |  42 +++
+ .../testing-best-practices/rules/security.md       |  27 ++
+ .../testing-best-practices/rules/test-data.md      |  68 ++++
+ .mcp.json                                          |  11 +
+ CLAUDE.md                                          | 159 +++++++--
+ boost.json                                         |  17 +
+ composer.json                                      |   1 +
+ composer.lock                                      | 359 ++++++++++++++++++++-
+ 40 files changed, 3717 insertions(+), 30 deletions(-)
+
+commit 02a4fd755ca6605c707820c058ae4b3f1c3ce224
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 02:13:07 +0500
+
+    Complete lab 8 feedback form and flash session
+
+ app/Http/Controllers/PageController.php | 20 ++++++++-
+ bootstrap/app.php                       |  8 ++--
+ config/lab.php                          |  1 -
+ resources/views/feedback.blade.php      | 66 +++++++++++++++++++++++++++
+ resources/views/layouts/app.blade.php   | 80 ++++++++++++++++++---------------
+ routes/web.php                          | 10 ++---
+ 6 files changed, 137 insertions(+), 48 deletions(-)
+
+commit b096fd3b2c124f316c6ca4343ee3a1963c894911
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-23 00:56:34 +0500
+
+    ЛПР8 п.5: Blade-шаблоны
+
+ public/images/umbrella.png              | Bin 0 -> 292318 bytes
+ resources/views/catalog/index.blade.php | 111 ++++++++++++++++++++++++++++++++
+ resources/views/catalog/show.blade.php  |  54 ++++++++++++++++
+ resources/views/layouts/app.blade.php   |  71 ++++++++++++++++++++
+ 4 files changed, 236 insertions(+)
+
+commit 04b78c77b1a612aa118a99005056b6a9e7fa2142
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-22 22:07:03 +0500
+
+    ЛПР8 п.4: контроллер каталога
+
+ app/Http/Controllers/CatalogController.php | 162 +++++++++++++++++++++++++++++
+ app/Http/Controllers/PageController.php    |  10 ++
+ routes/web.php                             |  33 +++++-
+ 3 files changed, 202 insertions(+), 3 deletions(-)
+
+commit cdf19ab08dd45864a7fd150ceafd61aeaa7797a0
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-22 22:00:13 +0500
+
+    ЛПР8 п.3: маршрут с параметром
+
+ routes/web.php | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit b06432f7f0d31de131d3fc83cc063f501f4a1709
+Author: Недосекова Александра <huqoohug@gmail.com>
+Date:   2026-10-22 21:49:49 +0500
+
+    ЛПР8 п.2: настройки .env и config/lab.php
+
+ config/lab.php | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+commit 4941510b3b58ba8432996de49ca7e53e6ed58e15
+Author: minmin <hoohoo_hoo@mail.ru>
+Date:   2026-10-22 21:37:04 +0500
+
+    create reposetory lpr-nedosekova
+
+ .editorconfig                                      |   18 +
+ .env.example                                       |   65 +
+ .gitattributes                                     |   11 +
+ .gitignore                                         |   27 +
+ .npmrc                                             |    2 +
+ AGENTS.md                                          |   47 +
+ CLAUDE.md                                          |   47 +
+ README.md                                          |   58 +
+ app/Http/Controllers/Controller.php                |    8 +
+ app/Models/User.php                                |   32 +
+ app/Providers/AppServiceProvider.php               |   24 +
+ artisan                                            |   18 +
+ bootstrap/app.php                                  |   21 +
+ bootstrap/cache/.gitignore                         |    2 +
+ bootstrap/providers.php                            |    7 +
+ composer.json                                      |   86 +
+ composer.lock                                      | 8459 ++++++++++++++++++++
+ config/app.php                                     |  126 +
+ config/auth.php                                    |  117 +
+ config/cache.php                                   |  136 +
+ config/database.php                                |  184 +
+ config/filesystems.php                             |   80 +
+ config/logging.php                                 |  140 +
+ config/mail.php                                    |  118 +
+ config/queue.php                                   |  129 +
+ config/services.php                                |   38 +
+ config/session.php                                 |  233 +
+ database/.gitignore                                |    1 +
+ database/factories/UserFactory.php                 |   45 +
+ .../0001_01_01_000000_create_users_table.php       |   49 +
+ .../0001_01_01_000001_create_cache_table.php       |   35 +
+ .../0001_01_01_000002_create_jobs_table.php        |   59 +
+ database/seeders/DatabaseSeeder.php                |   25 +
+ package.json                                       |   19 +
+ phpunit.xml                                        |   36 +
+ public/.htaccess                                   |   25 +
+ public/favicon.ico                                 |    0
+ public/index.php                                   |   20 +
+ public/robots.txt                                  |    2 +
+ resources/css/app.css                              |    9 +
+ resources/js/app.js                                |    1 +
+ resources/views/welcome.blade.php                  |  223 +
+ routes/console.php                                 |    8 +
+ routes/web.php                                     |    7 +
+ storage/app/.gitignore                             |    4 +
+ storage/app/private/.gitignore                     |    2 +
+ storage/app/public/.gitignore                      |    2 +
+ storage/framework/.gitignore                       |   10 +
+ storage/framework/cache/.gitignore                 |    4 +
+ storage/framework/cache/data/.gitignore            |    2 +
+ storage/framework/cache/locks/.gitignore           |    2 +
+ storage/framework/sessions/.gitignore              |    2 +
+ storage/framework/testing/.gitignore               |    2 +
+ storage/framework/views/.gitignore                 |    2 +
+ storage/logs/.gitignore                            |    2 +
+ tests/Feature/ExampleTest.php                      |   19 +
+ tests/TestCase.php                                 |   10 +
+ tests/Unit/ExampleTest.php                         |   16 +
+ vite.config.js                                     |   24 +
+ 59 files changed, 10900 insertions(+)
