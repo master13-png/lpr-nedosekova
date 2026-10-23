@@ -1,0 +1,46 @@
+info:
+  name: GET medicine by item_id
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: '{{base_url}}/medicines/{{item_id}}'
+  headers:
+    - name: Accept
+      value: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("GET medicine returns HTTP 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("medicine response follows format B", function () {
+          const body = res.getBody();
+
+          expect(body).to.have.all.keys("status", "result", "student", "lesson");
+          expect(body.status).to.equal("ok");
+          expect(body.result.id).to.equal(Number(bru.getEnvVar("item_id")));
+          expect(body.result).to.have.all.keys(
+            "id",
+            "manufacturerId",
+            "code",
+            "name",
+            "form",
+            "dosageMg",
+            "price",
+            "byPrescription",
+            "manufacturer",
+            "createdAt",
+            "updatedAt"
+          );
+          expect(body.result.manufacturer).to.have.all.keys("id", "name", "country");
+          expect(body.student).to.equal("nedosekova");
+          expect(body.lesson).to.include("X6-CTVR");
+        });
+
+settings:
+  encodeUrl: true

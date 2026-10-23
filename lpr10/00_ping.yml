@@ -1,0 +1,33 @@
+info:
+  name: API ping
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: '{{base_url}}/ping'
+  headers:
+    - name: Accept
+      value: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("GET /api/ping returns HTTP 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("ping response follows format B", function () {
+          const body = res.getBody();
+
+          expect(body).to.have.all.keys("status", "result", "student", "lesson");
+          expect(body.status).to.equal("ok");
+          expect(body.result.message).to.equal("pong");
+          expect(body.result.time).to.be.a("string");
+          expect(body.student).to.equal("nedosekova");
+          expect(body.lesson).to.include("X6-CTVR");
+        });
+
+settings:
+  encodeUrl: true

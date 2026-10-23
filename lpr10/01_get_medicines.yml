@@ -1,0 +1,51 @@
+info:
+  name: GET medicines list
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: '{{base_url}}/medicines?per_page=2&sort=-price'
+  headers:
+    - name: Accept
+      value: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("GET medicines returns HTTP 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("medicine list follows format B", function () {
+          const body = res.getBody();
+
+          expect(body).to.have.all.keys("status", "result", "student", "lesson", "pagination");
+          expect(body.status).to.equal("ok");
+          expect(body.result).to.be.an("array");
+          expect(body.result).to.have.lengthOf(2);
+          expect(body.result[0]).to.have.all.keys(
+            "id",
+            "manufacturerId",
+            "code",
+            "name",
+            "form",
+            "dosageMg",
+            "price",
+            "byPrescription",
+            "manufacturer",
+            "createdAt",
+            "updatedAt"
+          );
+          expect(body.result[0].manufacturer).to.have.all.keys("id", "name", "country");
+          expect(body.pagination).to.have.all.keys("page", "pages", "limit", "count");
+          expect(body.pagination.page).to.equal(1);
+          expect(body.pagination.limit).to.equal(2);
+          expect(body.pagination.count).to.be.at.least(2);
+          expect(body.student).to.equal("nedosekova");
+          expect(body.lesson).to.include("X6-CTVR");
+        });
+
+settings:
+  encodeUrl: true

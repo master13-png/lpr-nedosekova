@@ -1,0 +1,113 @@
+info:
+  name: POST create medicine
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: '{{base_url}}/medicines'
+  headers:
+    - name: Accept
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "manufacturerId": 1,
+        "code": "LX-0000",
+        "name": "Тестовый API препарат",
+        "form": "Таблетки",
+        "dosageMg": 250,
+        "price": 1250.00,
+        "byPrescription": false
+      }
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const baseUrl = bru.getEnvVar("base_url");
+        let medicineCode = null;
+
+        for (let attempt = 0; attempt < 100; attempt += 1) {
+          const suffix = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
+          const candidate = `LX-${suffix}`;
+          const lookup = await new Promise((resolve, reject) => {
+            bru.sendRequest({
+              method: "GET",
+              url: `${baseUrl}/medicines?q=${encodeURIComponent(candidate)}&per_page=50`,
+              headers: { Accept: "application/json" },
+              timeout: 10000
+            }, (error, response) => {
+              if (error) {
+                reject(error);
+                return;
+              }
+
+              resolve(response);
+            });
+          });
+
+          if (lookup.status !== 200 || !lookup.data || !Array.isArray(lookup.data.result)) {
+            throw new Error("Не удалось проверить уникальность кода препарата.");
+          }
+
+          if (!lookup.data.result.some((medicine) => medicine.code === candidate)) {
+            medicineCode = candidate;
+            break;
+          }
+        }
+
+        if (medicineCode === null) {
+          throw new Error("Не удалось подобрать свободный код препарата.");
+        }
+
+        req.setBody({
+          manufacturerId: 1,
+          code: medicineCode,
+          name: "Тестовый API препарат",
+          form: "Таблетки",
+          dosageMg: 250,
+          price: 1250.00,
+          byPrescription: false
+        });
+    - type: after-response
+      code: |-
+        if (res.getStatus() === 201) {
+          bru.setEnvVar("item_id", String(res.getBody().result.id));
+        }
+    - type: tests
+      code: |-
+        test("POST medicine returns HTTP 201", function () {
+          expect(res.getStatus()).to.equal(201);
+        });
+
+        test("created medicine follows format B and has Location", function () {
+          const body = res.getBody();
+          const expectedKeys = [
+            "id",
+            "manufacturerId",
+            "code",
+            "name",
+            "form",
+            "dosageMg",
+            "price",
+            "byPrescription",
+            "manufacturer",
+            "createdAt",
+            "updatedAt"
+          ];
+
+          expect(body).to.have.all.keys("status", "result", "student", "lesson");
+          expect(body.status).to.equal("ok");
+          expect(body.result).to.have.all.keys(expectedKeys);
+          expect(body.result.id).to.be.a("number");
+          expect(body.result.code).to.match(/^[A-Z]{2}-[0-9]{4}$/);
+          expect(body.result.manufacturer).to.have.all.keys("id", "name", "country");
+          expect(res.getHeader("Location")).to.include(`/api/medicines/${body.result.id}`);
+          expect(body.student).to.equal("nedosekova");
+          expect(body.lesson).to.include("X6-CTVR");
+        });
+
+settings:
+  encodeUrl: true

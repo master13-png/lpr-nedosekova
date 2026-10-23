@@ -1,0 +1,6 @@
+name: Local
+variables:
+  - name: base_url
+    value: http://127.0.0.1:8114/api
+  - name: item_id
+    value: ''

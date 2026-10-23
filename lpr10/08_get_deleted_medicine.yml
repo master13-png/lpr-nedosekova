@@ -1,0 +1,33 @@
+info:
+  name: GET deleted medicine
+  type: http
+  seq: 9
+
+http:
+  method: GET
+  url: '{{base_url}}/medicines/{{item_id}}'
+  headers:
+    - name: Accept
+      value: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("GET deleted medicine returns HTTP 404", function () {
+          expect(res.getStatus()).to.equal(404);
+        });
+
+        test("not found response follows format B", function () {
+          const body = res.getBody();
+
+          expect(body).to.have.all.keys("status", "httpCode", "message", "details");
+          expect(body.status).to.equal("error");
+          expect(body.httpCode).to.equal(404);
+          expect(body.message).to.equal("Запись не найдена");
+          expect(body.details).to.be.an("object");
+          expect(Object.keys(body.details)).to.have.lengthOf(0);
+        });
+
+settings:
+  encodeUrl: true

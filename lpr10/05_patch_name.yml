@@ -1,0 +1,40 @@
+info:
+  name: PATCH one medicine field
+  type: http
+  seq: 6
+
+http:
+  method: PATCH
+  url: '{{base_url}}/medicines/{{item_id}}'
+  headers:
+    - name: Accept
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Обновлённый API препарат"
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("PATCH medicine returns HTTP 200", function () {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("PATCH response follows format B", function () {
+          const body = res.getBody();
+
+          expect(body).to.have.all.keys("status", "result", "student", "lesson");
+          expect(body.status).to.equal("ok");
+          expect(body.result.id).to.equal(Number(bru.getEnvVar("item_id")));
+          expect(body.result.name).to.equal("Обновлённый API препарат");
+          expect(body.result.manufacturer).to.be.an("object");
+          expect(body.student).to.equal("nedosekova");
+          expect(body.lesson).to.include("X6-CTVR");
+        });
+
+settings:
+  encodeUrl: true

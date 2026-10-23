@@ -1,0 +1,41 @@
+info:
+  name: POST empty JSON
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: '{{base_url}}/medicines'
+  headers:
+    - name: Accept
+      value: application/json
+  body:
+    type: json
+    data: '{}'
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("empty POST returns HTTP 422", function () {
+          expect(res.getStatus()).to.equal(422);
+        });
+
+        test("validation error follows format B", function () {
+          const body = res.getBody();
+
+          expect(body).to.have.all.keys("status", "httpCode", "message", "details");
+          expect(body.status).to.equal("error");
+          expect(body.httpCode).to.equal(422);
+          expect(body.message).to.equal("Ошибка валидации данных");
+          expect(body.details).to.be.an("object");
+          expect(body.details).to.have.property("manufacturerId");
+          expect(body.details).to.have.property("code");
+          expect(body.details).to.have.property("name");
+          expect(body.details).to.have.property("form");
+          expect(body.details).to.have.property("dosageMg");
+          expect(body.details).to.have.property("price");
+        });
+
+settings:
+  encodeUrl: true

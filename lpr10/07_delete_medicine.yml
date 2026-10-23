@@ -1,0 +1,26 @@
+info:
+  name: DELETE medicine
+  type: http
+  seq: 8
+
+http:
+  method: DELETE
+  url: '{{base_url}}/medicines/{{item_id}}'
+  headers:
+    - name: Accept
+      value: application/json
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("DELETE medicine returns HTTP 204", function () {
+          expect(res.getStatus()).to.equal(204);
+        });
+
+        test("DELETE response has no body", function () {
+          expect(res.getBody() || "").to.equal("");
+        });
+
+settings:
+  encodeUrl: true

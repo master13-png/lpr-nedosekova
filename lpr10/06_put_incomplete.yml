@@ -1,0 +1,42 @@
+info:
+  name: PUT one field validation
+  type: http
+  seq: 7
+
+http:
+  method: PUT
+  url: '{{base_url}}/medicines/{{item_id}}'
+  headers:
+    - name: Accept
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "PUT только одно поле"
+      }
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("incomplete PUT returns HTTP 422", function () {
+          expect(res.getStatus()).to.equal(422);
+        });
+
+        test("PUT validation error follows format B", function () {
+          const body = res.getBody();
+
+          expect(body).to.have.all.keys("status", "httpCode", "message", "details");
+          expect(body.status).to.equal("error");
+          expect(body.httpCode).to.equal(422);
+          expect(body.message).to.equal("Ошибка валидации данных");
+          expect(body.details).to.have.property("manufacturerId");
+          expect(body.details).to.have.property("code");
+          expect(body.details).to.have.property("form");
+          expect(body.details).to.have.property("dosageMg");
+          expect(body.details).to.have.property("price");
+        });
+
+settings:
+  encodeUrl: true
